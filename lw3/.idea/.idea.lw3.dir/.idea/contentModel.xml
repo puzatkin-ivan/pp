@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Admin\.Rider2019.1\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Admin\.Rider2019.1\system\resharper-host\local\Transient\ReSharperHost\v191\SolutionCaches\_.19.00" t="ExcludeRecursive" />
+    <e p="W:\!git\pp\lw3" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="CriticalSection" t="Include">
+        <e p="CriticalSectionEnum.cs" t="Include" />
+        <e p="ICriticalSection.cs" t="Include" />
+        <e p="MutexCriticalSection.cs" t="Include" />
+      </e>
+      <e p="IntergalCalculator" t="Include">
+        <e p="CalculateIntegralParams.cs" t="Include" />
+        <e p="ThreadIntegralCalculator.cs" t="Include" />
+      </e>
+      <e p="lw3.csproj" t="IncludeRecursive" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp2.2" t="Include">
+            <e p="lw3.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Program.cs" t="Include" />
+    </e>
+  </component>
+</project>

@@ -1,0 +1,1 @@
+["AUD", "AZN", "GBP", "TRY", "TJS", "SGD", "XDR", "RON", "AMD", "BYN", "BGN", "BRL", "CHF", "ZAR", "KRW", "JPY"]
