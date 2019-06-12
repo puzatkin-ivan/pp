@@ -1,131 +1,82 @@
 #include "pch.h"
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <cctype>
-#include <locale>
 #include <ctime>
+#include <fstream>
+#include <memory>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <windows.h>
 
-using MatrixRow = std::vector<double>;
-using Matrix = std::vector<MatrixRow>;
+using Matrix = std::vector<std::vector<float>>;
 
 namespace
 {
 
-    static const int COUNT_INPUT_ARGUMENT = 3;
+Matrix mainMatrix;
 
-    static const double EPS = 1e-9;
+int matrixSize;
+
+int threadNumber;
+
+static const double EPS = 1E-9;
+
+struct ThreadArguments
+{
+    std::istream* data;
+    Matrix* matrix;
+    int start, end, row, col, size;
+};
 
 }
 
-MatrixRow ReadMatrixRow(const std::string& row)
-{
-    std::string s = row;
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
-        return !std::isspace(ch);
-    }));
-    MatrixRow matrixRow;
-    std::stringstream stream(s);
+void MatrixOperations(std::istream& input, int threadCount);
+int Rank();
+int tryStringToInt(const std::string& str);
 
-    while (!stream.eof())
+int main(int argc, char* argv[])
+{
+    HANDLE process = GetCurrentProcess();
+    SetProcessAffinityMask(process, 0b100);
+
+    clock_t start = clock();
+    if (argc != 3)
     {
-        int cell;
-        stream >> cell;
-        matrixRow.push_back(cell);
+        std::cout << "Wrong number of arguments." << std::endl;
+        std::cout << "Usage: lw1-pp.exe <input file> <tread number>" << std::endl;
+        return 1;
     }
 
-    return matrixRow;
-}
-
-Matrix ReadMatrix(std::istream& streamIn)
-{
-    Matrix matrix;
-    std::string row;
-    while (std::getline(streamIn, row))
+    const std::string inputFileName = argv[1];
+    std::ifstream inputFile(inputFileName);
+    if (!inputFile.is_open())
     {
-        auto rowMatrix = ReadMatrixRow(row);
-        matrix.push_back(rowMatrix);
-    }
-    return matrix;
-}
-
-void PrintMatrix(std::ostream& streamOut, const Matrix& matrix)
-{
-    for (const auto& row : matrix)
-    {
-        for (auto cell : row)
-        {
-            streamOut << cell << ' ';
-        }
-        streamOut << std::endl;
-    }
-}
-
-MatrixRow AdditionOfLines(const MatrixRow& lhs, const MatrixRow& rhs, size_t beginIndex)
-{
-    double coeff = (lhs[beginIndex] != 0) ? -(rhs[beginIndex] / lhs[beginIndex]) : 0;
-    std::cout << lhs[beginIndex] << std::endl;
-    MatrixRow result;
-    for (size_t index = 0; index < lhs.size(); ++index)
-    {
-        result.push_back(rhs[index] + (coeff * lhs[index]));
-    }
-    return result;
-}
-
-int GetCountNonzeroRow(const Matrix& matrix)
-{
-    int count = 0;
-    for (size_t index = 0; index < matrix.size(); ++index)
-    {
-        bool isNonZeroRow = false;
-        for (size_t j = 0; j < matrix[0].size(); ++j)
-        {
-            if (matrix[index][j] != 0)
-            {
-                isNonZeroRow = true;
-                break;
-            }
-        }
-        count += (isNonZeroRow) ? 1 : 0;
-    }
-    return count;
-}
-
-double GetRangMatrix(Matrix& matrix)
-{
-    std::cout << std::endl;
-    size_t minSize = std::min(matrix.size(), matrix[0].size());
-    for (size_t index = 0; index < minSize; ++index)
-    {
-        if (matrix[index][index] != 0)
-        {
-            auto coeff = matrix[index][index];
-            for (size_t index2 = 0; index2 < matrix[index].size(); ++index2)
-            {
-                matrix[index][index2] /= coeff;
-            }
-            for (size_t j = index + 1; j < matrix.size(); ++j)
-            {
-                matrix[j] = AdditionOfLines(matrix[index], matrix[j], index);
-            }
-        }
+        std::cout << "Input file cannot be opened." << std::endl;
+        return 1;
     }
 
-    double rang = GetCountNonzeroRow(matrix);
+    int threadNumber = tryStringToInt(argv[2]);
+    if (threadNumber == -1 || ((threadNumber < 1) || (threadNumber > 16)))
+    {
+        std::cout << "Input is not a number." << std::endl;
+        return 1;
+    }
 
-    return rang;
+    MatrixOperations(inputFile, threadNumber);
+    std::cout << Rank() << std::endl;
+
+    clock_t end = clock();
+    clock_t clockTicksTaken = end - start;
+    double timeInMilliSeconds = clockTicksTaken;
+    std::cout << "Time: " << timeInMilliSeconds << "ms";
+    return 0;
 }
 
-int tryStringToInt(const std::string& threadCount)
+int tryStringToInt(const std::string& str)
 {
     int result = 0;
     try
     {
-        result = std::stoi(threadCount, nullptr, 10);
+        result = std::stoi(str, nullptr, 10);
     }
     catch (std::invalid_argument ex)
     {
@@ -134,28 +85,106 @@ int tryStringToInt(const std::string& threadCount)
     return result;
 }
 
-int main(int argc, char *argv[])
+DWORD WINAPI GetMatrix(PVOID pvParam)
 {
-    if (argc != COUNT_INPUT_ARGUMENT)
+    auto threadArguments = (ThreadArguments*)pvParam;
+    float number;
+    std::vector<float> line;
+    for (int i = 0; i < threadArguments->size; i++)
     {
-        std::cout << "Error: Invalid count input argument" << std::endl;
-        std::cout << "Usage: lw1.exe <inputFileName>" << std::endl;
-        return 1;
+        line.clear();
+        for (int j = 0; j < threadArguments->size; j++)
+        {
+            (*(threadArguments->data)) >> number;
+            line.push_back(number);
+        }
+
+        (*(threadArguments->matrix)).push_back(line);
     }
-    const std::string inputFileName = argv[1];
-    std::ifstream streamIn(inputFileName);
-    if (!streamIn.is_open())
+
+    ExitThread(0);
+}
+
+DWORD WINAPI WorkMatrix(PVOID pvParam)
+{
+    auto threadArguments = static_cast<ThreadArguments*>(pvParam);
+    int j = threadArguments->row;
+    int i = threadArguments->col;
+
+    for (int k = threadArguments->start; k < threadArguments->end; ++k)
     {
-        std::cout << "Error: Impossible to open input file" << std::endl;
-        return 1;
+        if (k != j && abs((*threadArguments->matrix)[k][i]) > EPS)
+        {
+            for (size_t p = i + 1; p < (*(threadArguments->matrix)).size(); ++p)
+            {
+                (*(threadArguments->matrix))[k][p] -= (*(threadArguments->matrix))[j][p] * (*(threadArguments->matrix))[k][i];
+            }
+        }
     }
 
-    std::time_t begin = std::time(nullptr);
-    auto matrix = ReadMatrix(streamIn);
+    ExitThread(0);
+}
 
-    auto rang = GetRangMatrix(matrix);
+void MatrixOperations(std::istream& input, int threads)
+{
+    input >> matrixSize;
+    threadNumber = threads > matrixSize ? matrixSize : threads;
+    auto* threadArguments = new ThreadArguments;
+    threadArguments->data = &input;
+    threadArguments->matrix = &mainMatrix;
+    threadArguments->size = matrixSize;
+    HANDLE* hTread = new HANDLE;
 
-    std::time_t end = std::time(nullptr);
-    std::cout << "Rang: " << rang << std::endl;
-    std::cout << "Time: " << end - begin << std::endl;
+    *hTread = CreateThread(NULL, 0, &GetMatrix, (PVOID)threadArguments, 0, NULL);
+    WaitForMultipleObjects(1, hTread, true, INFINITE);
+}
+
+int Rank()
+{
+    Matrix matrix(mainMatrix);
+    int rank = matrixSize;
+    std::vector<char> str(matrixSize);
+
+    for (int i = 0; i < matrixSize; i++)
+    {
+        int j;
+        for (j = 0; j < matrixSize; j++)
+        {
+            if ((abs(matrix[j][i]) > EPS) && !str[j]) { break; }
+        }
+
+        if (j == matrixSize)
+        {
+            --rank;
+        }
+        else
+        {
+            str[j] = true;
+            for (int p = i + 1; p < matrixSize; p++)
+            {
+                matrix[j][p] /= matrix[j][i];
+            }
+
+            int step = matrixSize / threadNumber;
+            int threadCounter = threadNumber;
+            HANDLE* hTread = new HANDLE[threadNumber];
+
+            for (int k = 0; threadCounter != 0; k += step)
+            {
+                --threadCounter;
+                auto* threadArguments = new ThreadArguments;
+                threadArguments->matrix = &matrix;
+                threadArguments->col = i;
+                threadArguments->row = j;
+                threadArguments->start = k;
+
+                threadArguments->end = (threadCounter != 0) ? k + step : matrixSize;
+
+                hTread[threadCounter] = CreateThread(NULL, 0, &WorkMatrix, (PVOID)threadArguments, 0, NULL);
+            }
+
+            WaitForMultipleObjects(threadNumber, hTread, true, INFINITE);
+        }
+    }
+    return rank;
 }

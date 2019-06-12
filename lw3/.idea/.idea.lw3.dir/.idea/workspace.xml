@@ -14,7 +14,12 @@
       <change afterPath="$PROJECT_DIR$/../lw1/lw1/lw1.vcxproj.filters" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../lw1/lw1/pch.cpp" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../lw1/lw1/pch.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.lw3.dir/.idea/contentModel.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.lw3.dir/.idea/indexLayout.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.lw3.dir/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.lw3.dir/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.lw3.dir/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.lw3.dir/riderModule.iml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -156,6 +161,7 @@
         <option value="$PROJECT_DIR$/Program.cs" />
         <option value="$PROJECT_DIR$/CriticalSection/MutexCriticalSection.cs" />
         <option value="$PROJECT_DIR$/IntergalCalculator/ThreadIntegralCalculator.cs" />
+        <option value="$PROJECT_DIR$/../.gitignore" />
       </list>
     </option>
   </component>
@@ -257,12 +263,20 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1559805664773</updated>
-      <workItem from="1559805691652" duration="9236000" />
+      <workItem from="1559805691652" duration="9438000" />
     </task>
+    <task id="LOCAL-00001" summary="Добавил lw3">
+      <created>1559815508036</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1559815508036</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9236000" />
+    <option name="totallyTimeSpent" value="9438000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -275,7 +289,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24966443" />
@@ -308,6 +321,10 @@
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="null" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Добавил lw3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавил lw3" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
