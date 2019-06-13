@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    MatrixOperations(inputFile, threadNumber);
-    std::cout << Rank() << std::endl;
+    DoExecute(inputFile, threadNumber);
+    std::cout << CalculateRank() << std::endl;
 
     clock_t end = clock();
     clock_t clockTicksTaken = end - start;

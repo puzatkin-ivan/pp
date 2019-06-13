@@ -28,7 +28,7 @@ namespace
 
 }
 
-void MatrixOperations(std::istream& input, int threadCount);
-int Rank();
+void DoExecute(std::istream& input, int threadCount);
+int CalculateRank();
 int tryStringToInt(const std::string& str);
 void ProcessRow(ThreadArguments* threadArguments, size_t j, size_t i, size_t d);

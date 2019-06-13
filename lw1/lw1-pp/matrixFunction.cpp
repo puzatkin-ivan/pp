@@ -60,7 +60,7 @@ void ProcessRow(ThreadArguments* threadArguments, size_t j, size_t i, size_t d)
     }
 }
 
-void MatrixOperations(std::istream& input, int threads)
+void DoExecute(std::istream& input, int threads)
 {
     input >> matrixSize;
     threadNumber = threads > matrixSize ? matrixSize : threads;
@@ -74,7 +74,7 @@ void MatrixOperations(std::istream& input, int threads)
     WaitForMultipleObjects(1, hTread, true, INFINITE);
 }
 
-int Rank()
+int CalculateRank()
 {
     Matrix matrix(mainMatrix);
     int rank = matrixSize;
